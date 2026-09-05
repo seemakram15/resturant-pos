@@ -1,0 +1,29 @@
+{
+  "name": "khalifa-foods",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Khalifa Foods restaurant management system — POS, website, mobile companion",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=@khalifa/web",
+    "dev:web": "npm run dev --workspace=@khalifa/web",
+    "dev:desktop": "npm run dev --workspace=@khalifa/desktop",
+    "dev:emails": "npm run dev --workspace=@khalifa/emails",
+    "build": "npm run build --workspaces --if-present",
+    "build:web": "npm run build --workspace=@khalifa/web",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "supabase:start": "supabase start",
+    "supabase:reset": "supabase db reset",
+    "supabase:push": "supabase db push",
+    "supabase:seed": "supabase db reset --local"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

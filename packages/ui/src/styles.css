@@ -1,0 +1,197 @@
+/* Khalifa Foods · Global styles (theme tokens + base) */
+
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Noto+Nastaliq+Urdu:wght@400;500;600;700&display=swap");
+
+:root {
+  --ground: #FFFFFF;
+  --ground-2: #FBF7F1;
+  --paper: #FFFFFF;
+  --ink: #17140F;
+  --ink-2: #3A342D;
+  --ink-3: #6B6157;
+  --ink-4: #A79E92;
+  --rule: #ECE6DC;
+  --rule-2: #F5F1EA;
+  --accent: #E0450A;
+  --accent-hover: #C23A08;
+  --accent-ink: #8A2C06;
+  --accent-wash: #FDECE0;
+  --gold: #E8A600;
+  --gold-wash: #FCF3D9;
+  --ok: #15803D;
+  --warn: #B45309;
+  --stop: #A81919;
+
+  --serif: "Fraunces", "Iowan Old Style", "Palatino", ui-serif, Georgia, serif;
+  --sans: "IBM Plex Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --urdu: "Noto Nastaliq Urdu", "Jameel Noori Nastaleeq", serif;
+
+  --shadow-sm: 0 1px 2px rgba(20,18,16,.05);
+  --shadow-md: 0 2px 6px -2px rgba(20,18,16,.08), 0 12px 28px -14px rgba(20,18,16,.22);
+  --shadow-lg: 0 8px 40px -16px rgba(20,18,16,.30);
+
+  --radius-sm: 3px;
+  --radius-md: 6px;
+  --radius-lg: 12px;
+  --radius-xl: 20px;
+
+  color-scheme: light dark;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --ground: #141210;
+    --ground-2: #1B1815;
+    --gold: #E8A600;
+    --gold-wash: #2A2410;
+    --paper: #1B1815;
+    --ink: #F5EFE2;
+    --ink-2: #D9CFBB;
+    --ink-3: #A79E92;
+    --ink-4: #6B6157;
+    --rule: #2B2621;
+    --rule-2: #221E1A;
+    --accent: #E8813F;
+    --accent-hover: #F09250;
+    --accent-ink: #F6BE93;
+    --accent-wash: #2E1C10;
+    --ok: #4ADE80;
+    --warn: #FCD34D;
+    --stop: #F87171;
+    --shadow-md: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+  }
+}
+
+:root[data-theme="dark"] {
+  --ground: #141210;
+  --ground-2: #1B1815;
+  --gold: #E8A600;
+  --gold-wash: #2A2410;
+  --paper: #1B1815;
+  --ink: #F5EFE2;
+  --ink-2: #D9CFBB;
+  --ink-3: #A79E92;
+  --ink-4: #6B6157;
+  --rule: #2B2621;
+  --rule-2: #221E1A;
+  --accent: #E8813F;
+  --accent-hover: #F09250;
+  --accent-ink: #F6BE93;
+  --accent-wash: #2E1C10;
+  --ok: #4ADE80;
+  --warn: #FCD34D;
+  --stop: #F87171;
+  --shadow-md: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  margin: 0;
+  background: var(--ground);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+[dir="rtl"] body { font-family: var(--urdu); line-height: 2; }
+
+img, svg, video { max-width: 100%; height: auto; display: block; }
+a { color: inherit; }
+button { font: inherit; cursor: pointer; }
+input, select, textarea { font: inherit; color: inherit; }
+
+::selection { background: var(--accent-wash); color: var(--accent-ink); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
+/* Typography helpers */
+.display { font-family: var(--serif); font-weight: 500; letter-spacing: -0.02em; line-height: 1.05; text-wrap: balance; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.urdu { font-family: var(--urdu); direction: rtl; }
+.eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: .5rem;
+  padding: .7rem 1.15rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: var(--accent);
+  color: #FFFEFB;
+  font-weight: 600;
+  font-size: .95rem;
+  text-decoration: none;
+  transition: background .15s, transform .05s, box-shadow .15s;
+  box-shadow: var(--shadow-sm);
+  min-height: 44px;
+}
+.btn:hover { background: var(--accent-hover); }
+.btn:active { transform: translateY(1px); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.btn.ghost:hover { background: var(--rule-2); }
+.btn.subtle { background: var(--accent-wash); color: var(--accent-ink); }
+.btn.subtle:hover { background: var(--accent); color: #FFFEFB; }
+.btn.big { padding: .95rem 1.5rem; font-size: 1rem; }
+.btn.block { width: 100%; }
+
+/* Card / surface */
+.card {
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-lg);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* Inputs */
+.field {
+  display: flex; flex-direction: column; gap: .3rem;
+}
+.field label {
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.field input, .field textarea, .field select {
+  padding: .7rem .9rem;
+  border: 1px solid var(--rule);
+  border-radius: var(--radius-md);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: .95rem;
+  min-height: 44px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.field input:focus, .field textarea:focus, .field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-wash);
+}
+.field textarea { min-height: 88px; resize: vertical; }
+
+/* Pill */
+.pill {
+  display: inline-flex; align-items: center; gap: .3rem;
+  padding: .2rem .55rem;
+  font-family: var(--mono);
+  font-size: .68rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  border-radius: 999px;
+  border: 1px solid currentColor;
+}
+.pill.ok    { color: var(--ok); }
+.pill.warn  { color: var(--warn); }
+.pill.stop  { color: var(--stop); }
+.pill.solid { background: var(--accent); color: #FFFEFB; border-color: var(--accent); }
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}

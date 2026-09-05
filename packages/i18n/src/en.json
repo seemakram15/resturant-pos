@@ -1,0 +1,102 @@
+{
+  "nav": {
+    "home": "Home",
+    "menu": "Menu",
+    "about": "About",
+    "contact": "Contact",
+    "order": "Order online",
+    "cart": "Cart",
+    "admin": "Admin"
+  },
+  "brand": {
+    "name": "Khalifa Foods",
+    "tagline": "Healthy Ingredients · Healthy Life"
+  },
+  "hero": {
+    "eyebrow": "Fast food · DHA Lahore",
+    "title": "Bold flavor, honest ingredients.",
+    "subtitle": "Fresh burgers, hand-cut chicken, wood-oven pizza — the classics done right, delivered fast to your door in Defence.",
+    "cta_order": "Order online",
+    "cta_menu": "Browse the menu"
+  },
+  "menu": {
+    "title": "Menu",
+    "subtitle": "Twenty-four deals plus everything à la carte. Prices in PKR.",
+    "categories": {
+      "deals": "Deals",
+      "technologia": "Technologia deals",
+      "twins": "Twins deals",
+      "family": "Family deals",
+      "pizza": "Pizza deals",
+      "burgers": "Burgers",
+      "chicken": "Chicken",
+      "shawarma": "Shawarma",
+      "pizza_alacarte": "Pizza",
+      "steaks": "Steaks",
+      "sides": "Sides",
+      "drinks": "Drinks"
+    },
+    "add_to_cart": "Add to cart",
+    "added": "Added",
+    "unavailable": "Currently unavailable"
+  },
+  "cart": {
+    "title": "Your cart",
+    "empty": "Your cart is empty.",
+    "empty_cta": "Browse the menu",
+    "line_qty": "Qty",
+    "subtotal": "Subtotal",
+    "delivery_fee": "Delivery fee",
+    "tax": "Tax",
+    "total": "Total",
+    "checkout": "Checkout",
+    "remove": "Remove"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "subtitle": "Cash on collection or on delivery. Pay when your order arrives.",
+    "method": {
+      "pickup": "Self pickup",
+      "pickup_desc": "Ready in ~20 minutes at our DHA branch.",
+      "delivery": "Delivery",
+      "delivery_desc": "We deliver across DHA and PCHS."
+    },
+    "field": {
+      "name": "Full name",
+      "phone": "Phone number",
+      "email": "Email",
+      "pickup_time": "Preferred pickup time",
+      "pickup_asap": "As soon as possible",
+      "street": "Street & house / flat",
+      "area": "Area / phase / block",
+      "landmark": "Landmark (optional)",
+      "notes": "Delivery notes (optional)"
+    },
+    "place_order": "Place order",
+    "placing": "Placing your order…",
+    "success_title": "Order received",
+    "success_body": "We've sent a confirmation email. You can track your order status here."
+  },
+  "order": {
+    "status": {
+      "received": "Received",
+      "preparing": "Preparing",
+      "ready": "Ready",
+      "out_for_delivery": "Out for delivery",
+      "delivered": "Delivered",
+      "completed": "Completed",
+      "cancelled": "Cancelled"
+    }
+  },
+  "footer": {
+    "hours": "Open daily · 12 PM – 2 AM",
+    "call": "Call to order",
+    "rights": "© 2026 Khalifa Foods · All rights reserved"
+  },
+  "common": {
+    "currency": "Rs",
+    "back": "Back",
+    "loading": "Loading…",
+    "error": "Something went wrong."
+  }
+}

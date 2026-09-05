@@ -1,0 +1,34 @@
+{
+  "name": "@khalifa/desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Khalifa Foods POS · Electron wrapper for the Next.js app",
+  "main": "src/main.js",
+  "scripts": {
+    "dev": "concurrently -k \"npm:dev:web\" \"wait-on http://localhost:3000 && electron .\"",
+    "dev:web": "npm --prefix ../web run dev",
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.7.0",
+    "electron-store": "^10.0.0"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2",
+    "electron": "^33.3.1",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.khalifa.foods.pos",
+    "productName": "Khalifa POS",
+    "asar": true,
+    "directories": { "output": "dist" },
+    "files": ["src/**/*", "package.json"],
+    "win": {
+      "target": ["nsis"],
+      "icon": "src/assets/icon.png"
+    }
+  }
+}

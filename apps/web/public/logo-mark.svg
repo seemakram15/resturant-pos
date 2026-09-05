@@ -1,0 +1,9 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Khalifa Foods">
+  <rect width="64" height="64" rx="16" fill="#C2410C"/>
+  <path d="M32 12c-1 0-1.8.8-1.8 1.8v4.5c-6.9.9-12.2 6.8-12.2 13.9 0 .9.7 1.6 1.6 1.6h24.8c.9 0 1.6-.7 1.6-1.6 0-7.1-5.3-13-12.2-13.9v-4.5c0-1-.8-1.8-1.8-1.8z" fill="#FBE9DB"/>
+  <rect x="16" y="37" width="32" height="3.6" rx="1.8" fill="#FBE9DB"/>
+  <path d="M20 45h24c0 4.4-3.6 8-8 8h-8c-4.4 0-8-3.6-8-8z" fill="#FBE9DB" opacity="0.85"/>
+  <circle cx="26" cy="27" r="1.6" fill="#C2410C"/>
+  <circle cx="32" cy="25.5" r="1.6" fill="#C2410C"/>
+  <circle cx="38" cy="27" r="1.6" fill="#C2410C"/>
+</svg>

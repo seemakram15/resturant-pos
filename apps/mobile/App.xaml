@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Application xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KhalifaMobile.App">
+    <Application.Resources>
+        <ResourceDictionary>
+            <Color x:Key="Ground">#F7F2E9</Color>
+            <Color x:Key="Paper">#FFFEFB</Color>
+            <Color x:Key="Ink">#141210</Color>
+            <Color x:Key="InkMuted">#6B6157</Color>
+            <Color x:Key="Rule">#E4DBC9</Color>
+            <Color x:Key="Accent">#C2410C</Color>
+            <Color x:Key="AccentWash">#FBE9DB</Color>
+
+            <Style TargetType="Page">
+                <Setter Property="BackgroundColor" Value="{StaticResource Ground}" />
+            </Style>
+
+            <Style x:Key="Display" TargetType="Label">
+                <Setter Property="FontFamily" Value="FrauncesRegular" />
+                <Setter Property="FontSize" Value="28" />
+                <Setter Property="TextColor" Value="{StaticResource Ink}" />
+            </Style>
+
+            <Style x:Key="Body" TargetType="Label">
+                <Setter Property="FontFamily" Value="PlexRegular" />
+                <Setter Property="FontSize" Value="15" />
+                <Setter Property="TextColor" Value="{StaticResource InkMuted}" />
+            </Style>
+
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Accent}" />
+                <Setter Property="TextColor" Value="{StaticResource Paper}" />
+                <Setter Property="CornerRadius" Value="8" />
+                <Setter Property="FontFamily" Value="PlexMedium" />
+            </Style>
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

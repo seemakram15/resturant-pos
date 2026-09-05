@@ -1,0 +1,735 @@
+<title>Khalifa Foods · System Spec</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --ground: #F7F2E9;
+    --paper: #FFFEFB;
+    --ink: #141210;
+    --ink-2: #3A342D;
+    --ink-3: #6B6157;
+    --ink-4: #A79E92;
+    --rule: #E4DBC9;
+    --rule-2: #EFE7D6;
+    --accent: #C2410C;
+    --accent-ink: #7A2A08;
+    --accent-wash: #FBE9DB;
+    --ok: #15803D;
+    --warn: #B45309;
+    --stop: #A81919;
+    --shadow: 0 1px 0 rgba(20,18,16,.04), 0 8px 20px -12px rgba(20,18,16,.18);
+    --serif: 'Fraunces', 'Iowan Old Style', 'Palatino', ui-serif, Georgia, serif;
+    --sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --receipt-mono: 'IBM Plex Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+    --max: 78rem;
+    --text: 40rem;
+    --gap: clamp(1rem, 2vw, 1.75rem);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #141210; --paper: #1B1815; --ink: #F5EFE2; --ink-2: #D9CFBB; --ink-3: #A79E92; --ink-4: #6B6157;
+      --rule: #2B2621; --rule-2: #221E1A; --accent: #E8813F; --accent-ink: #F6BE93; --accent-wash: #2E1C10;
+      --ok: #4ADE80; --warn: #FCD34D; --stop: #F87171;
+      --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+    }
+  }
+  :root[data-theme="dark"] {
+    --ground: #141210; --paper: #1B1815; --ink: #F5EFE2; --ink-2: #D9CFBB; --ink-3: #A79E92; --ink-4: #6B6157;
+    --rule: #2B2621; --rule-2: #221E1A; --accent: #E8813F; --accent-ink: #F6BE93; --accent-wash: #2E1C10;
+    --ok: #4ADE80; --warn: #FCD34D; --stop: #F87171;
+    --shadow: 0 1px 0 rgba(0,0,0,.4), 0 12px 28px -14px rgba(0,0,0,.7);
+  }
+
+  body { background: var(--ground); color: var(--ink); font-family: var(--sans); font-size: 16px; line-height: 1.6; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+  .page { max-width: var(--max); margin: 0 auto; padding: clamp(1.25rem, 3vw, 3rem) clamp(1.25rem, 4vw, 3rem) 6rem; display: grid; grid-template-columns: 1fr; gap: var(--gap); }
+  @media (min-width: 68rem) { .page { grid-template-columns: 15rem minmax(0, 1fr); gap: 3.5rem; } .toc { position: sticky; top: 2rem; align-self: start; } }
+  .toc { font-family: var(--sans); font-size: 0.82rem; color: var(--ink-3); border-left: 1px solid var(--rule); padding: .2rem 0 .2rem 1rem; display: none; }
+  @media (min-width: 68rem) { .toc { display: block; } }
+  .toc ol { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: .5rem; counter-reset: toc; }
+  .toc li { counter-increment: toc; }
+  .toc li::before { content: counter(toc, decimal-leading-zero); font-family: var(--mono); font-size: .68rem; color: var(--ink-4); margin-right: .55rem; letter-spacing: .04em; }
+  .toc a { color: inherit; text-decoration: none; border-bottom: 1px dashed transparent; }
+  .toc a:hover { color: var(--accent); border-bottom-color: var(--accent); }
+  .toc .toc-title { font-family: var(--serif); font-weight: 600; color: var(--ink); font-size: 1rem; margin-bottom: 1rem; letter-spacing: -0.01em; }
+  main { min-width: 0; max-width: 52rem; }
+
+  .eyebrow { font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+  h1 { font-family: var(--serif); font-weight: 500; font-size: clamp(2.4rem, 5vw, 3.8rem); line-height: 1.02; letter-spacing: -0.025em; text-wrap: balance; margin: 0 0 1.25rem; color: var(--ink); }
+  h1 em { font-style: italic; color: var(--accent); font-weight: 400; }
+  .lede { font-family: var(--serif); font-weight: 400; font-size: clamp(1.15rem, 1.6vw, 1.35rem); line-height: 1.5; color: var(--ink-2); max-width: 38rem; text-wrap: pretty; }
+
+  .meta { display: flex; flex-wrap: wrap; gap: 1.25rem 2rem; padding: 1rem 0 1.25rem; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); margin: 2.5rem 0 3rem; font-family: var(--mono); font-size: .72rem; letter-spacing: .04em; color: var(--ink-3); text-transform: uppercase; }
+  .meta div { display: flex; flex-direction: column; gap: .15rem; }
+  .meta b { color: var(--ink); font-weight: 500; font-family: var(--sans); font-size: .82rem; letter-spacing: 0; text-transform: none; }
+
+  section { margin: 4.5rem 0; scroll-margin-top: 2rem; }
+  section > h2 { font-family: var(--serif); font-weight: 500; font-size: clamp(1.7rem, 2.5vw, 2.2rem); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 .35rem; color: var(--ink); text-wrap: balance; }
+  section > h2::before { content: attr(data-num); display: block; font-family: var(--mono); font-size: .72rem; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; margin-bottom: .6rem; font-weight: 400; }
+  .section-sub { color: var(--ink-3); font-family: var(--serif); font-style: italic; font-size: 1.05rem; max-width: 40rem; margin: .5rem 0 2rem; }
+
+  h3 { font-family: var(--sans); font-weight: 600; font-size: 1.05rem; letter-spacing: -0.005em; color: var(--ink); margin: 2.25rem 0 .5rem; }
+  h4 { font-family: var(--mono); font-weight: 500; font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-3); margin: 1.5rem 0 .5rem; }
+
+  p, ul, ol { margin: 0 0 1rem; max-width: var(--text); }
+  p { color: var(--ink-2); }
+  ul, ol { padding-left: 1.25rem; color: var(--ink-2); }
+  li { margin: .25rem 0; }
+  li::marker { color: var(--ink-4); }
+  strong { color: var(--ink); font-weight: 600; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid var(--accent-wash); }
+  a:hover { border-bottom-color: var(--accent); }
+  code { font-family: var(--mono); font-size: .85em; background: var(--rule-2); padding: .1em .35em; border-radius: 3px; color: var(--accent-ink); }
+
+  .decision { background: var(--paper); border: 1px solid var(--rule); border-left: 3px solid var(--accent); padding: 1rem 1.25rem; margin: 1.25rem 0; border-radius: 2px; box-shadow: var(--shadow); }
+  .decision .k { font-family: var(--mono); font-size: .68rem; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); margin-bottom: .25rem; }
+  .decision .v { font-family: var(--serif); font-size: 1.05rem; color: var(--ink); }
+  .decision .why { font-size: .88rem; color: var(--ink-3); margin-top: .35rem; }
+  .change { background: var(--accent-wash); border: 1px solid var(--accent); padding: 1rem 1.25rem; margin: 1.25rem 0; border-radius: 2px; font-size: .9rem; color: var(--accent-ink); }
+  .change b { font-family: var(--mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; display: block; margin-bottom: .35rem; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1rem; margin: 1.5rem 0; }
+  .mod { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 1rem 1.1rem 1.15rem; display: flex; flex-direction: column; gap: .35rem; }
+  .mod .n { font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; color: var(--ink-4); text-transform: uppercase; }
+  .mod .t { font-family: var(--serif); font-weight: 500; font-size: 1.05rem; color: var(--ink); letter-spacing: -0.01em; }
+  .mod .d { font-size: .85rem; color: var(--ink-3); line-height: 1.5; }
+  .mod ul { padding-left: 1rem; margin: .35rem 0 0; font-size: .82rem; color: var(--ink-3); }
+  .mod ul li { margin: .1rem 0; }
+
+  .tw { overflow-x: auto; margin: 1.5rem 0; border: 1px solid var(--rule); border-radius: 4px; background: var(--paper); }
+  table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+  th, td { text-align: left; padding: .65rem .85rem; border-bottom: 1px solid var(--rule-2); vertical-align: top; }
+  th { font-family: var(--mono); font-size: .7rem; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); background: var(--rule-2); border-bottom: 1px solid var(--rule); }
+  tr:last-child td { border-bottom: none; }
+  td.mono, th.num, td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+  td.num, th.num { text-align: right; }
+  .chosen { color: var(--accent); font-weight: 600; }
+  .chosen::before { content: '● '; }
+  .deal-name { font-family: var(--serif); font-weight: 500; color: var(--ink); font-size: .95rem; }
+  .deal-name .sub { font-family: var(--sans); font-weight: 400; color: var(--ink-3); font-size: .78rem; margin-left: .35rem; font-style: italic; }
+
+  .pill { display: inline-block; font-family: var(--mono); font-size: .68rem; padding: .15rem .5rem; border-radius: 999px; letter-spacing: .05em; text-transform: uppercase; border: 1px solid currentColor; }
+  .pill.mvp { color: var(--ok); }
+  .pill.v2 { color: var(--warn); }
+  .pill.later { color: var(--ink-4); }
+
+  .arch { background: var(--paper); border: 1px solid var(--rule); border-radius: 4px; padding: 1.25rem; margin: 1.5rem 0; overflow-x: auto; }
+  .arch svg { display: block; width: 100%; height: auto; min-width: 640px; }
+  .arch text { font-family: 'IBM Plex Sans', sans-serif; }
+
+  /* Receipt mockup — 80mm thermal look */
+  .receipt-row { display: grid; grid-template-columns: 1fr; gap: 1.25rem; margin: 1.5rem 0; }
+  @media (min-width: 42rem) { .receipt-row { grid-template-columns: 1fr 1fr; } }
+  .receipt {
+    background: #FDFCF8;
+    color: #1D2A46;
+    border: 1px solid var(--rule);
+    border-radius: 2px;
+    padding: 1.5rem 1.25rem;
+    font-family: var(--receipt-mono);
+    font-size: 12px;
+    line-height: 1.45;
+    box-shadow: var(--shadow);
+    max-width: 24rem;
+    margin: 0 auto;
+    position: relative;
+  }
+  .receipt.old { color: #29417d; }
+  .receipt .lbl { text-transform: uppercase; letter-spacing: .1em; font-size: 10px; color: var(--ink-3); font-family: var(--mono); }
+  .receipt .brand { text-align: center; font-family: 'Fraunces', serif; font-style: italic; font-size: 22px; font-weight: 500; letter-spacing: 0.02em; margin-bottom: .1rem; }
+  .receipt .tag { text-align: center; font-family: var(--sans); font-weight: 600; font-size: 11px; letter-spacing: .12em; margin-bottom: .8rem; }
+  .receipt hr { border: none; border-top: 1px dashed #A6B3D0; margin: .5rem 0; }
+  .receipt .row { display: flex; justify-content: space-between; }
+  .receipt .row.big { font-family: 'Fraunces', serif; font-size: 16px; font-weight: 600; }
+  .receipt .item { display: grid; grid-template-columns: 1fr auto auto; gap: .5rem; }
+  .receipt .item .qty { text-align: right; width: 2rem; }
+  .receipt .item .amt { text-align: right; width: 4rem; }
+  .receipt .mod-line { padding-left: 1rem; font-size: 11px; color: var(--ink-3); }
+  .receipt .footer { text-align: center; font-size: 11px; margin-top: .8rem; }
+  .receipt .footer .ur { font-family: serif; direction: rtl; font-size: 12px; margin-top: .2rem; }
+  .receipt .qr { width: 68px; height: 68px; margin: .5rem auto; background: repeating-linear-gradient(0deg, #1D2A46 0 4px, transparent 4px 8px), repeating-linear-gradient(90deg, #1D2A46 0 4px, transparent 4px 8px); border: 4px solid #1D2A46; }
+  .receipt-cap { text-align: center; font-family: var(--mono); font-size: .7rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); margin-top: .5rem; }
+
+  .dm { display: grid; grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); gap: .5rem 1rem; margin: 1rem 0; }
+  .dm div { font-family: var(--mono); font-size: .82rem; color: var(--ink-2); padding: .3rem 0; border-bottom: 1px dashed var(--rule); }
+  .dm div span { color: var(--ink-4); font-size: .72rem; margin-left: .35rem; }
+
+  .rm { display: flex; flex-direction: column; gap: 1rem; margin: 1.5rem 0; }
+  .rm-row { display: grid; grid-template-columns: 4.5rem 1fr; gap: 1.25rem; align-items: start; padding: 1rem 0; border-top: 1px solid var(--rule); }
+  .rm-row:last-child { border-bottom: 1px solid var(--rule); }
+  .rm-tag { font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; color: var(--accent); padding-top: .2rem; }
+  .rm-body h4 { margin: 0 0 .25rem; color: var(--ink); font-family: var(--sans); font-size: .95rem; font-weight: 600; text-transform: none; letter-spacing: 0; }
+  .rm-body p { margin: 0; font-size: .88rem; color: var(--ink-3); max-width: 40rem; }
+
+  footer { margin-top: 5rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); font-family: var(--mono); font-size: .72rem; color: var(--ink-4); text-transform: uppercase; letter-spacing: .1em; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  ::selection { background: var(--accent-wash); color: var(--accent-ink); }
+  @media (prefers-reduced-motion: reduce) { * { animation: none !important; transition: none !important; } }
+</style>
+
+<div class="page">
+
+<aside class="toc" aria-label="Contents">
+  <div class="toc-title">Contents</div>
+  <ol>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#decisions">Locked decisions</a></li>
+    <li><a href="#stack">Stack — free-only</a></li>
+    <li><a href="#architecture">System architecture</a></li>
+    <li><a href="#modules">Functional modules</a></li>
+    <li><a href="#menu">Menu inventory</a></li>
+    <li><a href="#receipt">Receipt design</a></li>
+    <li><a href="#website">Website order flow</a></li>
+    <li><a href="#sync">Offline &amp; sync</a></li>
+    <li><a href="#i18n">Bilingual (EN + UR)</a></li>
+    <li><a href="#email">Email &amp; templates</a></li>
+    <li><a href="#pakistan">Pakistan-specific</a></li>
+    <li><a href="#nfr">Non-functional</a></li>
+    <li><a href="#data">Data model</a></li>
+    <li><a href="#tenancy">Multi-tenant path</a></li>
+    <li><a href="#roadmap">Roadmap</a></li>
+    <li><a href="#risks">Risks &amp; assumptions</a></li>
+  </ol>
+</aside>
+
+<main>
+
+<div class="eyebrow">Khalifa Foods · System Requirements · v0.3 · Sept 2026</div>
+<h1>A POS, website &amp; mobile system for <em>Khalifa Foods, DHA Lahore</em>.</h1>
+<p class="lede">Windows POS on the counter, a public ordering website, and a read-only mobile companion. Cash only in MVP, single till, offline-first on the counter, everything on free tiers. Built for Khalifa Foods first; schema shaped so the same system can serve other restaurants later.</p>
+
+<div class="meta">
+  <div><span>Client</span><b>Khalifa Foods · Healthy Ingredients Healthy Life</b></div>
+  <div><span>Branch</span><b>18-F Commercial PCHS, New Gourmet Bakery, DHA Lahore</b></div>
+  <div><span>Phone</span><b>0323-4748660</b></div>
+  <div><span>Currency</span><b>PKR (₨) · whole rupees</b></div>
+  <div><span>Tenancy</span><b>Single restaurant → SaaS-ready schema</b></div>
+  <div><span>Locations</span><b>1 branch · 1 POS terminal</b></div>
+  <div><span>Budget</span><b>Free tiers only (domain excluded)</b></div>
+  <div><span>Status</span><b>v0.3 · locked, ready to build</b></div>
+</div>
+
+<div class="change">
+  <b>Changed in v0.3</b>
+  Business identity locked (Khalifa Foods, DHA Lahore). Menu delivered — 24 deals across 4 categories + à la carte items (Section 06). <strong>Reservations removed</strong> from MVP — dine-in tables only. Website flow narrowed to <strong>pickup or delivery</strong> (full address required for delivery). Default sales tax <strong>0 %</strong>, manually overridable per branch. Receipt spec drafted based on existing slip (Section 07).
+</div>
+
+<section id="overview">
+<h2 data-num="Section 01">Overview</h2>
+<p>Three clients, one database, one sync path:</p>
+<div class="grid">
+  <div class="mod"><div class="n">Client 01 · Counter</div><div class="t">Desktop POS (Windows)</div><div class="d">Electron + Next.js. One terminal per branch in v1. Local SQLite mirror keeps the till working when the internet drops.</div></div>
+  <div class="mod"><div class="n">Client 02 · Floor</div><div class="t">Mobile companion</div><div class="d">.NET MAUI (Android + iOS). Read-only viewer: live orders, stock levels, today's numbers.</div></div>
+  <div class="mod"><div class="n">Client 03 · Customer</div><div class="t">Website</div><div class="d">Next.js on Vercel. Landing, menu with prices &amp; deals, QR-menu deep links, pickup / delivery ordering.</div></div>
+</div>
+<p>Backing them: Supabase (Postgres + Auth + Storage), Vercel (web + APIs), Resend (email), and a small outbox worker for offline sync.</p>
+</section>
+
+<section id="decisions">
+<h2 data-num="Section 02">Locked decisions</h2>
+<p class="section-sub">The constraints that shape everything downstream. Confirmed 2026-09-05.</p>
+
+<div class="decision"><div class="k">Client</div><div class="v">Khalifa Foods, DHA Lahore. Fast-food restaurant.</div><div class="why">Branding, address, and phone appear on receipts, emails, and website footer.</div></div>
+<div class="decision"><div class="k">Budget</div><div class="v">Free tier only. Domain is the single paid item.</div></div>
+<div class="decision"><div class="k">Tenancy</div><div class="v">Single restaurant now, multi-tenant SaaS-ready schema (<code>tenant_id</code> + <code>branch_id</code> everywhere).</div></div>
+<div class="decision"><div class="k">Desktop stack</div><div class="v">Electron + Next.js, Windows installer only in v1.</div></div>
+<div class="decision"><div class="k">Mobile stack</div><div class="v">.NET MAUI, read-only.</div></div>
+<div class="decision"><div class="k">POS terminals</div><div class="v">One terminal in v1. <code>terminal_id</code> reserved in schema for later.</div></div>
+<div class="decision"><div class="k">Payments</div><div class="v">Cash only in MVP. JazzCash / EasyPaisa / Raast / card in v2.</div></div>
+<div class="decision"><div class="k">Authentication</div><div class="v">Supabase email OTP + PIN login for cashier.</div></div>
+<div class="decision"><div class="k">Language</div><div class="v">English + Urdu day one, user-switchable per client.</div></div>
+<div class="decision"><div class="k">Caching layer</div><div class="v">None. Direct Postgres reads + Next.js ISR for the public site.</div></div>
+<div class="decision"><div class="k">Tables &amp; reservations</div><div class="v">Dine-in table management yes. Reservation booking removed.</div><div class="why">Walk-in-only floor. Table state (occupied / free / dirty) still tracked so waiters can route dine-in orders.</div></div>
+<div class="decision"><div class="k">Website ordering</div><div class="v">Two channels: <strong>self pickup</strong> or <strong>delivery</strong>. Delivery requires full address.</div></div>
+<div class="decision"><div class="k">Sales tax</div><div class="v">Default 0 %, manually overridable per branch and per item category.</div><div class="why">Owner handles tax externally. Rule engine stays in place for the day it flips.</div></div>
+<div class="decision"><div class="k">Brand assets</div><div class="v">Existing Khalifa Foods wordmark + tagline. Placeholder food photos (Unsplash) until owner supplies shots.</div></div>
+</section>
+
+<section id="stack">
+<h2 data-num="Section 03">Stack — free-tier only</h2>
+<div class="tw"><table>
+<thead><tr><th>Role</th><th>Service</th><th>Free tier</th><th>Why fine for v1</th></tr></thead>
+<tbody>
+<tr><td>Cloud database + auth + storage</td><td class="chosen">Supabase</td><td>500 MB Postgres · 1 GB storage · 50 K MAU</td><td>One restaurant fits with headroom.</td></tr>
+<tr><td>Local database (desktop)</td><td class="chosen">SQLite via <code>better-sqlite3</code></td><td>Free forever, bundled</td><td>Zero ops.</td></tr>
+<tr><td>Local database (mobile)</td><td class="chosen">SQLite via <code>sqlite-net-pcl</code></td><td>Free forever, bundled</td><td>Read-only cache for MAUI.</td></tr>
+<tr><td>Hosting (website + APIs)</td><td class="chosen">Vercel Hobby</td><td>100 GB bandwidth/mo</td><td>Menu pages ISR-cached — mostly static bytes.</td></tr>
+<tr><td>File storage (photos)</td><td class="chosen">Supabase Storage</td><td>1 GB</td><td>~20 K photos at 50 KB.</td></tr>
+<tr><td>Transactional email</td><td class="chosen">Resend</td><td>3 000/mo · 100/day</td><td>OTP + order confirmations.</td></tr>
+<tr><td>Error monitoring</td><td class="chosen">Sentry (optional MVP)</td><td>5 K events/mo</td><td>Skip until first incident.</td></tr>
+<tr><td>Caching / rate limit</td><td>— none —</td><td>—</td><td>Not needed at this scale.</td></tr>
+</tbody>
+</table></div>
+<h3>Fallbacks if a service tightens</h3>
+<div class="tw"><table>
+<thead><tr><th>If this fails us</th><th>Move to</th></tr></thead>
+<tbody>
+<tr><td>Supabase (pauses after 7 idle days on free)</td><td>Neon, or self-hosted PocketBase on VPS</td></tr>
+<tr><td>Vercel bandwidth cap</td><td>Cloudflare Pages (unlimited requests)</td></tr>
+<tr><td>Supabase Storage 1 GB</td><td>Cloudflare R2 (10 GB, zero egress)</td></tr>
+<tr><td>Resend 100/day</td><td>Brevo (300/day) or Zoho Mail SMTP</td></tr>
+</tbody>
+</table></div>
+</section>
+
+<section id="architecture">
+<h2 data-num="Section 04">System architecture</h2>
+<div class="arch">
+<svg viewBox="0 0 820 440" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="System architecture diagram">
+  <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0,0 L10,5 L0,10 z" fill="var(--ink-3)"/></marker></defs>
+  <g>
+    <rect x="30" y="30" width="220" height="90" rx="4" fill="var(--paper)" stroke="var(--rule)"/>
+    <text x="45" y="55" font-size="11" fill="var(--accent)" font-family="JetBrains Mono" letter-spacing="1.4">DESKTOP · COUNTER</text>
+    <text x="45" y="78" font-size="15" fill="var(--ink)" font-family="Fraunces" font-weight="500">Electron + Next.js</text>
+    <text x="45" y="100" font-size="12" fill="var(--ink-3)">SQLite mirror · offline r/w</text>
+    <rect x="300" y="30" width="220" height="90" rx="4" fill="var(--paper)" stroke="var(--rule)"/>
+    <text x="315" y="55" font-size="11" fill="var(--accent)" font-family="JetBrains Mono" letter-spacing="1.4">MOBILE · FLOOR</text>
+    <text x="315" y="78" font-size="15" fill="var(--ink)" font-family="Fraunces" font-weight="500">.NET MAUI</text>
+    <text x="315" y="100" font-size="12" fill="var(--ink-3)">Read-only · SQLite cache</text>
+    <rect x="570" y="30" width="220" height="90" rx="4" fill="var(--paper)" stroke="var(--rule)"/>
+    <text x="585" y="55" font-size="11" fill="var(--accent)" font-family="JetBrains Mono" letter-spacing="1.4">WEB · CUSTOMER</text>
+    <text x="585" y="78" font-size="15" fill="var(--ink)" font-family="Fraunces" font-weight="500">Next.js on Vercel</text>
+    <text x="585" y="100" font-size="12" fill="var(--ink-3)">Menu · pickup / delivery</text>
+  </g>
+  <g>
+    <rect x="230" y="180" width="360" height="60" rx="4" fill="var(--accent-wash)" stroke="var(--accent)"/>
+    <text x="410" y="205" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="JetBrains Mono" letter-spacing="1.4">API + SYNC ENDPOINTS</text>
+    <text x="410" y="225" text-anchor="middle" font-size="14" fill="var(--accent-ink)" font-family="Fraunces" font-weight="500">Next.js Route Handlers · Supabase Realtime</text>
+  </g>
+  <line x1="140" y1="120" x2="330" y2="180" stroke="var(--ink-3)" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="410" y1="120" x2="410" y2="180" stroke="var(--ink-3)" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="680" y1="120" x2="490" y2="180" stroke="var(--ink-3)" stroke-width="1.2" marker-end="url(#arr)"/>
+  <g>
+    <rect x="140" y="300" width="240" height="100" rx="4" fill="var(--paper)" stroke="var(--rule)"/>
+    <text x="155" y="325" font-size="11" fill="var(--ink-3)" font-family="JetBrains Mono" letter-spacing="1.4">CLOUD DATA</text>
+    <text x="155" y="348" font-size="14" fill="var(--ink)" font-family="Fraunces" font-weight="500">Supabase (free)</text>
+    <text x="155" y="368" font-size="11" fill="var(--ink-3)">Postgres · RLS · Auth · Storage</text>
+    <text x="155" y="384" font-size="11" fill="var(--ink-3)">Realtime WAL to clients</text>
+    <rect x="440" y="300" width="240" height="100" rx="4" fill="var(--paper)" stroke="var(--rule)"/>
+    <text x="455" y="325" font-size="11" fill="var(--ink-3)" font-family="JetBrains Mono" letter-spacing="1.4">DELIVERY</text>
+    <text x="455" y="348" font-size="14" fill="var(--ink)" font-family="Fraunces" font-weight="500">Resend + printer</text>
+    <text x="455" y="368" font-size="11" fill="var(--ink-3)">Email OTP · order confirmations</text>
+    <text x="455" y="384" font-size="11" fill="var(--ink-3)">ESC/POS thermal printer</text>
+  </g>
+  <line x1="360" y1="240" x2="260" y2="300" stroke="var(--ink-3)" stroke-width="1.2" marker-end="url(#arr)"/>
+  <line x1="460" y1="240" x2="560" y2="300" stroke="var(--ink-3)" stroke-width="1.2" marker-end="url(#arr)"/>
+</svg>
+</div>
+</section>
+
+<section id="modules">
+<h2 data-num="Section 05">Functional modules</h2>
+
+<div class="grid">
+  <div class="mod"><div class="n">M01</div><div class="t">POS &amp; order entry <span class="pill mvp">MVP</span></div><div class="d">Cash tender, split bill, multiple open orders, hold/resume, void with reason, quick-item grid, deal picker.</div><ul><li>Keyboard + touch UI</li><li>Shift open/close, cash drawer counts</li><li>Z-report at end-of-day</li></ul></div>
+  <div class="mod"><div class="n">M02</div><div class="t">Menu, deals &amp; modifiers <span class="pill mvp">MVP</span></div><div class="d">Categories, à la carte items, variants, modifiers, combo/deal builder that maps directly to Khalifa's 24 existing deals.</div><ul><li>Item photo, description, allergens</li><li>Availability toggle (86 an item)</li><li>Happy-hour price schedules</li></ul></div>
+  <div class="mod"><div class="n">M03</div><div class="t">Dine-in tables <span class="pill mvp">MVP</span></div><div class="d">Floor plan editor, per-table status (occupied / free / dirty), table merge/split, order routing per table.</div><ul><li>No reservation booking (removed)</li></ul></div>
+  <div class="mod"><div class="n">M04</div><div class="t">Stock &amp; recipes <span class="pill mvp">MVP</span></div><div class="d">Ingredients, unit conversion, recipe BOM per menu item / per deal component so a sale deducts raw stock.</div><ul><li>Low-stock alerts (email digest)</li><li>Wastage log with reason codes</li><li>Stock take / cycle count</li></ul></div>
+  <div class="mod"><div class="n">M05</div><div class="t">Purchasing &amp; suppliers <span class="pill mvp">MVP</span></div><div class="d">Suppliers, POs, GRN, supplier invoices, payment tracking, cost history per ingredient.</div></div>
+  <div class="mod"><div class="n">M06</div><div class="t">Discounts &amp; promotions <span class="pill mvp">MVP</span></div><div class="d">Item / category / order-level discounts, coupon codes, BOGO, manager-approval for &gt;X %.</div></div>
+  <div class="mod"><div class="n">M07</div><div class="t">Reports &amp; dashboards <span class="pill mvp">MVP</span></div><div class="d">Sales by day/hour/item/category/deal, COGS, gross margin, top/slow sellers, peak-hour heatmap, waste %, deal-vs-à-la-carte mix.</div><ul><li>CSV / PDF export</li><li>Scheduled email reports</li></ul></div>
+  <div class="mod"><div class="n">M08</div><div class="t">Users, roles &amp; audit <span class="pill mvp">MVP</span></div><div class="d">Superadmin, owner, manager, cashier, waiter. Every sensitive action logged.</div><ul><li>PIN login for cashier (offline-capable)</li><li>Email OTP for admin roles</li></ul></div>
+  <div class="mod"><div class="n">M09</div><div class="t">Printing &amp; receipts <span class="pill mvp">MVP</span></div><div class="d">80 mm thermal receipt (customer), 80 mm kitchen ticket, A4 invoice for corporate. ESC/POS via USB / network.</div><ul><li>Customisable header / footer / logo</li><li>Bilingual (EN + UR) print</li><li>Reprint with "COPY" watermark</li></ul></div>
+  <div class="mod"><div class="n">M10</div><div class="t">QR menu <span class="pill mvp">MVP</span></div><div class="d">Per-table QR codes deep-link to the public menu with the table pre-selected. Ordering from QR in v2.</div></div>
+  <div class="mod"><div class="n">M11</div><div class="t">Website &amp; online orders <span class="pill mvp">MVP</span></div><div class="d">Landing, full menu with prices/deals/photos, order form for pickup or delivery, order-status page. See Section 08.</div></div>
+  <div class="mod"><div class="n">M12</div><div class="t">Superadmin console <span class="pill mvp">MVP</span></div><div class="d">Tenant seed, branch config, tax rules, printer setup, backup/restore, feature flags, email template preview.</div></div>
+  <div class="mod"><div class="n">M13</div><div class="t">Expense tracking <span class="pill mvp">MVP</span></div><div class="d">Non-inventory outflows: rent, utilities, salaries, repairs. Feeds P&amp;L view.</div></div>
+  <div class="mod"><div class="n">M14</div><div class="t">Bilingual UI (EN + UR) <span class="pill mvp">MVP</span></div><div class="d">Every screen, receipt, and email available in both languages, per-user toggle.</div></div>
+  <div class="mod"><div class="n">M15</div><div class="t">Kitchen Display (KDS) <span class="pill v2">v2</span></div><div class="d">Screen in kitchen with live tickets, timers, "mark ready" tap.</div></div>
+  <div class="mod"><div class="n">M16</div><div class="t">Delivery &amp; riders <span class="pill v2">v2</span></div><div class="d">Rider roster, order assignment, tracking link, cash reconciliation per rider.</div></div>
+  <div class="mod"><div class="n">M17</div><div class="t">Online payments <span class="pill v2">v2</span></div><div class="d">JazzCash · EasyPaisa · Raast · card via Safepay / PayFast.</div></div>
+  <div class="mod"><div class="n">M18</div><div class="t">Loyalty &amp; CRM <span class="pill later">later</span></div><div class="d">Customer profile, order history, birthday offers, tier points.</div></div>
+  <div class="mod"><div class="n">M19</div><div class="t">Multi-tenant SaaS <span class="pill later">later</span></div><div class="d">Sign-up, per-tenant subdomain, subscription billing.</div></div>
+</div>
+</section>
+
+<section id="menu">
+<h2 data-num="Section 06">Menu inventory — seed data</h2>
+<p class="section-sub">Extracted from the menu PDF supplied by the client. All 24 deals below become <code>combos</code> rows in the seed. Confirm the à la carte prices with the owner before P1 goes live.</p>
+
+<h3>Deal categories</h3>
+<h4>Technologia deals · single-person combos</h4>
+<div class="tw"><table>
+<thead><tr><th>Deal</th><th>Contents</th><th class="num">Price (Rs)</th></tr></thead>
+<tbody>
+<tr><td><span class="deal-name">Black Barry</span></td><td>1 Super Zinger Burger + Fries + 1 R. Drink</td><td class="num">549</td></tr>
+<tr><td><span class="deal-name">Nokia</span></td><td>1 Chicken Patty Burger + Fries + 1 R. Drink</td><td class="num">499</td></tr>
+<tr><td><span class="deal-name">Samsung</span></td><td>1 Grilled Chicken Burger + Fries + 1 R. Drink</td><td class="num">649</td></tr>
+<tr><td><span class="deal-name">Galaxy</span></td><td>1 Super Zinger Burger + 1 Pc Chicken + Fries + 1 R. Drink</td><td class="num">649</td></tr>
+<tr><td><span class="deal-name">Techno</span></td><td>1 Beef Burger (Double Filled) + Fries + 1 R. Drink</td><td class="num">749</td></tr>
+<tr><td><span class="deal-name">Vivo</span></td><td>1 Chicken Patty Burger + 4 Pcs Nuggets + 1 R. Drink</td><td class="num">599</td></tr>
+</tbody>
+</table></div>
+
+<h4>Twins deals · two-person combos</h4>
+<div class="tw"><table>
+<thead><tr><th>Deal</th><th>Contents</th><th class="num">Price (Rs)</th></tr></thead>
+<tbody>
+<tr><td><span class="deal-name">Ham Tum</span></td><td>9 Pcs Hot Wings + 1 R. Drink</td><td class="num">649</td></tr>
+<tr><td><span class="deal-name">Janu Manu</span></td><td>2 Pcs Chicken + 1 R. Drink</td><td class="num">599</td></tr>
+<tr><td><span class="deal-name">Bhai Bhai</span></td><td>2 Super Zinger Burgers + Fries + 1 Half-Litre Drink</td><td class="num">999</td></tr>
+<tr><td><span class="deal-name">Shony Mony</span></td><td>1 Chicken Patty Burger + 1 Super Zinger Burger + Fries + 1 Half-Litre Drink</td><td class="num">999</td></tr>
+<tr><td><span class="deal-name">Mama Papa</span></td><td>1 Cocktail Paratha Platter + 2 R. Drinks</td><td class="num">1,199</td></tr>
+<tr><td><span class="deal-name">Laila Majnu</span></td><td>2 Khalifa Super Shawarma (Black Olives, Jalapeño) + 2 R. Drinks</td><td class="num">749</td></tr>
+</tbody>
+</table></div>
+
+<h4>Family deals</h4>
+<div class="tw"><table>
+<thead><tr><th>Deal</th><th>Contents</th><th class="num">Price (Rs)</th></tr></thead>
+<tbody>
+<tr><td><span class="deal-name">Joined Family</span></td><td>3 Super Zinger Burgers + 1 Chicken Patty Burger + 3 Pcs Chicken + Fries + 1.5 L Coke</td><td class="num">2,199</td></tr>
+<tr><td><span class="deal-name">Lovely Cousin</span></td><td>3 Super Zinger Burgers + 6 Pcs Hot Wings + 1 L Coke</td><td class="num">1,499</td></tr>
+<tr><td><span class="deal-name">Group Bandi</span></td><td>5 Super Zinger Burgers + Fries + 1.5 L Coke</td><td class="num">1,999</td></tr>
+<tr><td><span class="deal-name">Family Function</span></td><td>9 Pcs Broast Chicken + 1.5 L Coke</td><td class="num">1,999</td></tr>
+<tr><td><span class="deal-name">Chachu ki Family</span></td><td>6 Super Zinger Shawarmas + 1.5 L Coke</td><td class="num">1,949</td></tr>
+<tr><td><span class="deal-name">Mamo ki Family</span></td><td>2 Donner Shawarmas + 2 Grilled Chicken Burgers + 9 Pcs Hot Wings + 1.5 L Coke</td><td class="num">2,249</td></tr>
+</tbody>
+</table></div>
+
+<h4>Pizza deals</h4>
+<p style="font-size:.85rem; color:var(--ink-3); margin-top:-.5rem;">The party-named deals from the printed menu are kept verbatim as this is a deliberate local marketing choice; the Urdu name is stored in <code>name_ur</code> and displayed alongside the English translation.</p>
+<div class="tw"><table>
+<thead><tr><th>Deal (EN)</th><th>Deal (UR)</th><th>Contents</th><th class="num">Price (Rs)</th></tr></thead>
+<tbody>
+<tr><td><span class="deal-name">Muslim League N</span></td><td dir="rtl">پاکستان مسلم لیگ ن</td><td>2 Small Pizzas + Half-Litre Drink</td><td class="num">1,199</td></tr>
+<tr><td><span class="deal-name">Tehreek-e-Insaf</span></td><td dir="rtl">پاکستان تحریک انصاف</td><td>1 Small Pizza + 1 Zinger Burger + 4 Pcs Hot Wings + Half-Litre Drink</td><td class="num">1,299</td></tr>
+<tr><td><span class="deal-name">Tehreek-e-Labbaik</span></td><td dir="rtl">پاکستان تحریک لبیک</td><td>2 Medium Pizzas + 1.5 L Coke</td><td class="num">2,299</td></tr>
+<tr><td><span class="deal-name">Peoples Party</span></td><td dir="rtl">پاکستان پیپلز پارٹی</td><td>2 Small Pizzas + 2 Zinger Burgers + 8 Pcs Hot Wings + 1.5 L Coke</td><td class="num">2,399</td></tr>
+<tr><td><span class="deal-name">MQM</span></td><td dir="rtl">ایم کیو ایم</td><td>2 Large Pizzas + 1.5 L Coke</td><td class="num">3,299</td></tr>
+<tr><td><span class="deal-name">Azad Umeedwar</span></td><td dir="rtl">آزاد امیدوار</td><td>1 Large Pizza + 4 Zinger Burgers + Fries + 1.5 L Coke</td><td class="num">3,599</td></tr>
+</tbody>
+</table></div>
+
+<h3>À la carte items (inferred from deal contents + receipt)</h3>
+<p style="font-size:.85rem; color:var(--ink-3);">Prices marked <code>?</code> need confirmation from owner. Special Peri Peri Steak price taken from the sample receipt (Rs 1,000).</p>
+<div class="tw"><table>
+<thead><tr><th>Category</th><th>Item</th><th class="num">Price (Rs)</th></tr></thead>
+<tbody>
+<tr><td rowspan="5">Burgers</td><td>Super Zinger Burger</td><td class="num">?</td></tr>
+<tr><td>Chicken Patty Burger</td><td class="num">?</td></tr>
+<tr><td>Grilled Chicken Burger</td><td class="num">?</td></tr>
+<tr><td>Beef Burger (Double Filled)</td><td class="num">?</td></tr>
+<tr><td>Zinger Burger</td><td class="num">?</td></tr>
+<tr><td rowspan="4">Chicken</td><td>Fried Chicken (per pc)</td><td class="num">?</td></tr>
+<tr><td>Broast Chicken (per pc)</td><td class="num">?</td></tr>
+<tr><td>Hot Wings (per pc)</td><td class="num">?</td></tr>
+<tr><td>Nuggets (4 pcs)</td><td class="num">?</td></tr>
+<tr><td rowspan="3">Shawarma</td><td>Khalifa Super Shawarma</td><td class="num">?</td></tr>
+<tr><td>Super Zinger Shawarma</td><td class="num">?</td></tr>
+<tr><td>Donner Shawarma</td><td class="num">?</td></tr>
+<tr><td rowspan="3">Pizza</td><td>Small Pizza</td><td class="num">?</td></tr>
+<tr><td>Medium Pizza</td><td class="num">?</td></tr>
+<tr><td>Large Pizza</td><td class="num">?</td></tr>
+<tr><td rowspan="2">Sides</td><td>Fries</td><td class="num">?</td></tr>
+<tr><td>Cocktail Paratha Platter</td><td class="num">?</td></tr>
+<tr><td>Steaks</td><td>Special Peri Peri Steak</td><td class="num">1,000</td></tr>
+<tr><td rowspan="4">Drinks</td><td>Regular Drink (250 ml)</td><td class="num">?</td></tr>
+<tr><td>Half-Litre Drink</td><td class="num">?</td></tr>
+<tr><td>1 L Coke</td><td class="num">?</td></tr>
+<tr><td>1.5 L Coke</td><td class="num">?</td></tr>
+</tbody>
+</table></div>
+
+<h3>Recipe BOM (build after prices land)</h3>
+<p>Each à la carte item gets a recipe row linking to ingredients (bun, patty, oil, sauce, wrap, wings, dough, cheese, drink concentrate, etc.). Each deal gets a composite recipe that references its component items. Sale of "Ham Tum" then deducts 9 wings + 1 R. Drink from stock automatically.</p>
+</section>
+
+<section id="receipt">
+<h2 data-num="Section 07">Receipt design</h2>
+<p class="section-sub">Modelled on Khalifa's existing slip — same information, cleaner layout, higher contrast, added QR for lookup.</p>
+
+<h3>Before &amp; after · same info, redesigned</h3>
+<div class="receipt-row">
+
+  <div>
+    <div class="receipt old">
+      <div class="brand" style="font-family:serif; font-style:italic;">Khalifa</div>
+      <div class="tag">HEALTHY INGREDIENTS HEALTHY LIFE</div>
+      <div class="row" style="font-size:11px;"><span>User: CEO Khalifa Nadeem</span><span>05/09/2026</span></div>
+      <div class="row" style="font-size:11px;"><span>Bill #: 13830</span><span>7:28</span></div>
+      <hr>
+      <div style="display:grid; grid-template-columns:1fr .8rem 2rem 3rem; font-weight:600; font-size:11px;">
+        <span>Product</span><span></span><span>Qty</span><span>Total</span>
+      </div>
+      <div style="display:grid; grid-template-columns:1fr .8rem 2rem 3rem;">
+        <span>Special Peri Peri Steak</span><span></span><span>1</span><span>1000.00</span>
+      </div>
+      <div style="margin-top:.4rem;">
+        <div class="row"><span>Gross Total</span><span>1000.00</span></div>
+        <div class="row"><span>Disc</span><span></span></div>
+        <div class="row"><span>Net Total</span><span>1000.00</span></div>
+        <div class="row"><span>Paid</span><span>1000.00</span></div>
+        <div class="row"><span>Change</span><span>0.00</span></div>
+      </div>
+      <hr>
+      <div style="font-size:10px;">Phone No: 03234748660<br>18-F Commercial PCHS New Gourmet Bakery, DHA Lahore</div>
+    </div>
+    <div class="receipt-cap">Existing slip (current)</div>
+  </div>
+
+  <div>
+    <div class="receipt">
+      <div class="brand">Khalifa</div>
+      <div style="text-align:center; font-family:serif; font-size:11px; direction:rtl; margin-top:-.2rem;">خلیفہ فوڈز</div>
+      <div class="tag">HEALTHY INGREDIENTS · HEALTHY LIFE</div>
+      <div style="text-align:center; font-size:11px; color:var(--ink-3);">18-F Commercial, PCHS<br>DHA Lahore · ☎ 0323-4748660</div>
+      <hr>
+      <div class="row" style="font-weight:600;"><span>DINE-IN · Table 04</span><span>Bill 13830</span></div>
+      <div class="row" style="font-size:11px; color:var(--ink-3);"><span>Cashier: Khalifa N.</span><span>05 Sep 26 · 19:28</span></div>
+      <hr>
+      <div class="item" style="font-weight:600;"><span>ITEM</span><span class="qty">QTY</span><span class="amt">AMT</span></div>
+      <div class="item"><span>Special Peri Peri<br>Steak</span><span class="qty">1</span><span class="amt">1,000</span></div>
+      <div class="mod-line">+ extra sauce (50)</div>
+      <div class="item"><span>Coke 500 ml</span><span class="qty">1</span><span class="amt">120</span></div>
+      <hr>
+      <div class="row"><span>Subtotal</span><span>Rs 1,170</span></div>
+      <div class="row"><span>Discount</span><span>–&nbsp;0</span></div>
+      <div class="row"><span>Tax (0 %)</span><span>0</span></div>
+      <hr>
+      <div class="row big"><span>TOTAL</span><span>Rs 1,170</span></div>
+      <hr>
+      <div class="row"><span>Cash</span><span>1,200</span></div>
+      <div class="row"><span>Change</span><span>30</span></div>
+      <div class="qr" aria-hidden="true"></div>
+      <div class="footer">
+        Scan to view digital receipt<br>
+        <strong>Thank you — come again</strong>
+        <div class="ur">‏شکریہ آپکا آنا‏</div>
+      </div>
+    </div>
+    <div class="receipt-cap">Redesigned · 80 mm thermal</div>
+  </div>
+
+</div>
+
+<h3>Layout spec</h3>
+<ul>
+  <li><strong>Width:</strong> 80 mm (72 mm printable at 203 DPI = 576 px).</li>
+  <li><strong>Header</strong> — Khalifa wordmark bitmap (owner supplies vector), Urdu wordmark line, tagline in one line, address + phone in a two-line block. All centered.</li>
+  <li><strong>Meta row</strong> — Order channel (DINE-IN / TAKEAWAY / ONLINE) + table (if dine-in) left, bill number right. Cashier name + terminal + timestamp on second line.</li>
+  <li><strong>Line items</strong> — three columns: ITEM (variable) · QTY (right-aligned 3 chars) · AMOUNT (right-aligned 5 chars). Modifiers indented one em under their parent line. Deal expansion optional (show as one line "Group Bandi" or exploded lines with a header — configurable per print).</li>
+  <li><strong>Totals block</strong> — Subtotal, Discount (with reason if present), Tax (always printed even if 0), TOTAL in a larger font.</li>
+  <li><strong>Tender block</strong> — Cash tendered, Change.</li>
+  <li><strong>QR code</strong> — encodes <code>https://khalifafoods.com/r/&lt;bill_no&gt;</code>. Deep-links to digital receipt (also useful for reprint / dispute lookup).</li>
+  <li><strong>Footer</strong> — Thank-you line in EN + UR. Small "Powered by …" watermark line, single 8 pt.</li>
+  <li><strong>Reprint watermark</strong> — reprints show "*** COPY ***" band across the meta row.</li>
+  <li><strong>Reason strip</strong> — voided lines show "VOID" band and reason.</li>
+</ul>
+
+<h3>Printer implementation</h3>
+<ul>
+  <li>Library: <code>node-thermal-printer</code> (Electron main-process addon; supports USB, network, Bluetooth ESC/POS).</li>
+  <li>Urdu rendering: font pre-rasterised to bitmap (Noto Nastaliq Urdu) then sent as ESC/POS graphics command — reliable across drivers.</li>
+  <li>Owner's printer model still to confirm; drivers finalised once we have the exact model.</li>
+</ul>
+</section>
+
+<section id="website">
+<h2 data-num="Section 08">Website order flow</h2>
+<p class="section-sub">Public site: landing → menu → pickup or delivery → confirmation. Cash only in MVP.</p>
+
+<h3>Pages</h3>
+<div class="grid">
+  <div class="mod"><div class="n">/</div><div class="t">Landing</div><div class="d">Hero (dish photo), tagline, "Order now" CTA, address + phone + hours, today's featured deals, Instagram-style photo strip.</div></div>
+  <div class="mod"><div class="n">/menu</div><div class="t">Full menu</div><div class="d">All 24 deals + à la carte, filterable by category, EN/UR toggle. Add-to-cart with variant/modifier picker.</div></div>
+  <div class="mod"><div class="n">/menu/[category]</div><div class="t">Category</div><div class="d">Deep-linkable category pages (also used by QR menu).</div></div>
+  <div class="mod"><div class="n">/cart</div><div class="t">Cart</div><div class="d">Review lines, edit quantities, apply coupon.</div></div>
+  <div class="mod"><div class="n">/checkout</div><div class="t">Checkout</div><div class="d">Two options: <strong>Pickup</strong> (name, phone, preferred time) · <strong>Delivery</strong> (name, phone, full address with street + area + landmark). Payment: cash on collection / delivery.</div></div>
+  <div class="mod"><div class="n">/order/[id]</div><div class="t">Order status</div><div class="d">Live status: received → preparing → ready → out for delivery → delivered. Link in confirmation email.</div></div>
+  <div class="mod"><div class="n">/contact</div><div class="t">Contact</div><div class="d">Address, phone, WhatsApp button, map embed (OpenStreetMap — free), opening hours.</div></div>
+</div>
+
+<h3>Checkout — pickup vs delivery</h3>
+<div class="tw"><table>
+<thead><tr><th>Field</th><th>Pickup</th><th>Delivery</th></tr></thead>
+<tbody>
+<tr><td>Name</td><td>Required</td><td>Required</td></tr>
+<tr><td>Phone</td><td>Required</td><td>Required</td></tr>
+<tr><td>Email</td><td>Required (for confirmation)</td><td>Required (for confirmation)</td></tr>
+<tr><td>Preferred time</td><td>Required (ASAP / choose slot)</td><td>—</td></tr>
+<tr><td>Address · street + house</td><td>—</td><td>Required</td></tr>
+<tr><td>Address · area / block</td><td>—</td><td>Required</td></tr>
+<tr><td>Address · landmark</td><td>—</td><td>Optional</td></tr>
+<tr><td>Delivery notes</td><td>—</td><td>Optional (e.g. "call before entering")</td></tr>
+<tr><td>Payment</td><td>Cash on collection</td><td>Cash on delivery</td></tr>
+</tbody>
+</table></div>
+
+<h3>Order intake behaviour</h3>
+<ul>
+  <li>Order lands in Postgres with <code>channel=online</code>, <code>status=received</code>.</li>
+  <li>Supabase Realtime pushes it to the counter's desktop app — kitchen ticket auto-prints.</li>
+  <li>Customer gets confirmation email (Section 10, T04) with order-status link.</li>
+  <li>Cashier updates status via POS ("Preparing" → "Ready" → "Out for delivery" → "Delivered"); each transition can optionally trigger a status email.</li>
+  <li>Rate-limited: max 5 orders/hour per phone number (Section 12).</li>
+</ul>
+</section>
+
+<section id="sync">
+<h2 data-num="Section 09">Offline &amp; sync</h2>
+<p>Single POS terminal + append-only orders → conflict resolution nearly vanishes.</p>
+<div class="tw"><table>
+<thead><tr><th>Source</th><th>Writes what</th><th>Where first</th></tr></thead>
+<tbody>
+<tr><td>Desktop POS</td><td>Orders, payments, stock movements, voids, shift ops</td><td>Local SQLite → outbox → cloud</td></tr>
+<tr><td>Website</td><td>Online orders (append-only)</td><td>Cloud Postgres → Realtime → desktop</td></tr>
+<tr><td>Mobile</td><td>Nothing</td><td>—</td></tr>
+<tr><td>Superadmin (web)</td><td>Menu, prices, users, config</td><td>Cloud Postgres → Realtime → desktop</td></tr>
+</tbody>
+</table></div>
+<ul>
+  <li><strong>Orders are append-only.</strong> No update-update conflict class.</li>
+  <li><strong>Idempotency keys</strong> — client-generated <code>ulid</code>, <code>UNIQUE</code> server-side.</li>
+  <li><strong>Reconciliation</strong> — desktop calls <code>GET /sync/pull?since=lastPulledAt</code> on boot + every N minutes, then drains its outbox.</li>
+  <li><strong>Sync worker</strong> — ~200-line Node worker inside Electron main process. Status bar chip: "Synced 12 s ago" / "Offline · 3 in queue".</li>
+  <li><strong>Mobile</strong> pulls deltas every 5 min while foregrounded. Never writes.</li>
+</ul>
+</section>
+
+<section id="i18n">
+<h2 data-num="Section 10">Bilingual — English &amp; Urdu, day one</h2>
+<ul>
+  <li><strong>Storage:</strong> <code>users.locale</code> = <code>en</code> or <code>ur</code>. Menu items store <code>name_en</code>, <code>name_ur</code>, <code>description_en</code>, <code>description_ur</code>.</li>
+  <li><strong>Website:</strong> <code>next-intl</code>, prefix routes <code>/ur/...</code>, <code>dir="rtl"</code> on the html tag for Urdu, logical CSS properties throughout.</li>
+  <li><strong>Desktop:</strong> shares Next.js pages, toggle in status bar.</li>
+  <li><strong>Mobile (MAUI):</strong> RESX resources, <code>FlowDirection</code> for RTL.</li>
+  <li><strong>Fonts:</strong> Noto Nastaliq Urdu (Urdu), IBM Plex Sans (English).</li>
+  <li><strong>Print:</strong> bilingual when both name fields exist.</li>
+</ul>
+</section>
+
+<section id="email">
+<h2 data-num="Section 11">Email &amp; templates</h2>
+<p class="section-sub">Supabase Auth delivers via SMTP → Resend so we control the visual design.</p>
+<div class="grid">
+  <div class="mod"><div class="n">T01</div><div class="t">OTP · sign in</div><div class="d">6-digit code in a large mono block, 10-min expiry, bilingual body.</div></div>
+  <div class="mod"><div class="n">T02</div><div class="t">Magic link</div><div class="d">Single "Sign in" button + plain-text fallback link.</div></div>
+  <div class="mod"><div class="n">T03</div><div class="t">Password reset</div><div class="d">Only if we enable passwords alongside OTP.</div></div>
+  <div class="mod"><div class="n">T04</div><div class="t">Order confirmation</div><div class="d">Line items, total in PKR, pickup slot or delivery address, "view live status" link.</div></div>
+  <div class="mod"><div class="n">T05</div><div class="t">Order ready / dispatched</div><div class="d">Short. "Ready for pickup" or "Out for delivery".</div></div>
+  <div class="mod"><div class="n">T06</div><div class="t">Daily digest (owner)</div><div class="d">Yesterday's numbers, top items, low-stock alerts. One email each morning.</div></div>
+</div>
+<ul>
+  <li>Same palette as the app: charcoal / saffron / receipt-paper.</li>
+  <li>600 px table-based HTML for Gmail/Outlook compatibility.</li>
+  <li>Reply-to = restaurant's real inbox.</li>
+  <li>Templates live in the repo as <code>react-email</code> components, previewed at <code>/dev/emails</code>.</li>
+</ul>
+</section>
+
+<section id="pakistan">
+<h2 data-num="Section 12">Pakistan-specific requirements</h2>
+<ul>
+  <li><strong>Currency:</strong> PKR, symbol <code>Rs</code> or <code>₨</code>, whole-rupee display, decimals kept internally.</li>
+  <li><strong>Sales tax:</strong> default 0 %. Rule engine per-branch / per-payment-method / per-category / effective-date, ready to switch on when the owner needs it. Never hard-code rates.</li>
+  <li><strong>Bilingual receipts</strong> — Urdu via bundled Nastaliq bitmap for reliable ESC/POS.</li>
+  <li><strong>Auth</strong> is email OTP + PIN for counter staff.</li>
+  <li><strong>Ramadan schedule</strong> — Sehri/Iftar windows as menu-availability toggles; Friday prayer break; Eid closures.</li>
+  <li><strong>Halal &amp; allergen tags</strong> per item.</li>
+  <li><strong>Corporate invoice</strong> — optional CNIC / NTN field on customer.</li>
+  <li><strong>Raast readiness</strong> for v2 payments alongside JazzCash / EasyPaisa.</li>
+</ul>
+</section>
+
+<section id="nfr">
+<h2 data-num="Section 13">Non-functional requirements</h2>
+<h4>Performance</h4>
+<ul><li>POS action &lt; 100 ms.</li><li>Receipt print &lt; 500 ms after tender.</li><li>Website LCP &lt; 2.5 s on 3G Fast.</li></ul>
+<h4>Availability</h4>
+<ul><li>Desktop offline for 72 h continuous.</li><li>Website 99.9 % (Vercel SLA).</li><li>Weekly cron pings Supabase to defeat the free-tier 7-day pause.</li></ul>
+<h4>Security</h4>
+<ul><li>Supabase RLS deny-by-default.</li><li>Rate limit public endpoints via Next.js middleware + tiny Supabase counters table.</li><li>Audit log: voids, refunds, price changes, user creation, permission changes, stock adjustments.</li></ul>
+<h4>Backup</h4>
+<ul><li>Nightly <code>pg_dump</code> via Vercel cron → Supabase Storage bucket (30-day retention).</li><li>Desktop SQLite snapshot on each shift close.</li><li>"Export everything" button in Superadmin.</li></ul>
+<h4>Accessibility</h4>
+<ul><li>WCAG 2.1 AA on customer website.</li><li>Large-tap-target mode on the POS.</li></ul>
+</section>
+
+<section id="data">
+<h2 data-num="Section 14">Data model — key tables</h2>
+<p class="section-sub">Every table carries <code>tenant_id</code>, <code>branch_id</code>, <code>terminal_id</code> (nullable), <code>ulid</code> ids.</p>
+<h4>Identity &amp; org</h4>
+<div class="dm"><div>tenants</div><div>branches</div><div>terminals</div><div>users <span>email, role, locale, pin_hash</span></div><div>user_branches</div><div>audit_log</div></div>
+<h4>Menu</h4>
+<div class="dm"><div>categories</div><div>items <span>name_en/ur, desc_en/ur, base_price</span></div><div>variants</div><div>modifier_groups</div><div>modifiers</div><div>combos <span>24 seed rows</span></div><div>combo_lines <span>combo → item → qty</span></div><div>availability_windows</div></div>
+<h4>Stock &amp; recipe</h4>
+<div class="dm"><div>ingredients</div><div>recipes</div><div>stock_ledger <span>append-only</span></div><div>wastage_log</div><div>stock_takes</div></div>
+<h4>Purchasing</h4>
+<div class="dm"><div>suppliers</div><div>purchase_orders</div><div>grn</div><div>supplier_invoices</div><div>supplier_payments</div></div>
+<h4>Orders</h4>
+<div class="dm"><div>orders <span>channel · dine_in/takeaway/pickup/delivery</span></div><div>order_lines <span>append-only</span></div><div>order_line_modifiers</div><div>tables</div><div>payments <span>cash only v1</span></div><div>voids</div></div>
+<h4>People &amp; money</h4>
+<div class="dm"><div>customers <span>name, phone, email, addresses[]</span></div><div>discounts</div><div>coupons</div><div>shifts</div><div>expenses</div><div>tax_profiles <span>default 0 % seed</span></div></div>
+<h4>Sync</h4>
+<div class="dm"><div>outbox <span>desktop only</span></div><div>sync_cursors</div><div>idempotency_keys <span>UNIQUE on ulid</span></div></div>
+</section>
+
+<section id="tenancy">
+<h2 data-num="Section 15">Multi-tenant path</h2>
+<ul>
+  <li><strong>Day 1:</strong> one row in <code>tenants</code> (Khalifa Foods), seeded by migration.</li>
+  <li><strong>Day N:</strong> add signup, subdomain resolver, billing. No schema change; RLS already isolates.</li>
+  <li><strong>RLS policy:</strong> <code>USING (tenant_id = current_setting('app.tenant_id')::uuid)</code>.</li>
+</ul>
+</section>
+
+<section id="roadmap">
+<h2 data-num="Section 16">Roadmap</h2>
+<div class="rm">
+  <div class="rm-row"><div class="rm-tag">P0 · Wk 1-2</div><div class="rm-body"><h4>Foundation</h4><p>Supabase project + schema + RLS. Email OTP auth. Vercel CI/CD. Electron shell (Windows). MAUI shell. Email template kit (T01–T06). Bilingual scaffolding (next-intl + RESX + Nastaliq fonts). Khalifa brand assets in place.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P1 · Wk 3-6</div><div class="rm-body"><h4>POS core + Khalifa menu seed</h4><p>Menu CRUD, all 24 deals seeded, order entry, cash tender, receipt print (new template — Section 07), shift open/close. Desktop offline SQLite mirror + custom sync worker. Printer driver certified against Khalifa's actual model (needs model number).</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P2 · Wk 7-9</div><div class="rm-body"><h4>Stock, purchasing, reports</h4><p>Recipe BOM (à la carte + deal composites) deducts stock on sale. POs, supplier invoices. Sales / margin / top-deal reports. Z-report. Daily digest email.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P3 · Wk 10-11</div><div class="rm-body"><h4>Dine-in tables</h4><p>Floor plan, table state, order routing per table. No booking flow.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P4 · Wk 12-14</div><div class="rm-body"><h4>Website &amp; online orders</h4><p>Landing, menu (EN + UR toggle), all 24 deals, pickup / delivery checkout, order-status page. Kitchen ticket auto-prints on the counter.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P5 · Wk 15-16</div><div class="rm-body"><h4>Mobile companion</h4><p>MAUI read-only viewer, bilingual UI, sync freshness chip, low-stock alerts.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">P6 · Wk 17-18</div><div class="rm-body"><h4>Hardening &amp; launch</h4><p>Backup cron, audit log audit, sync load-test, Urdu print QA, staff training pack, keep-Supabase-awake cron, go-live at Khalifa DHA.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">v2</div><div class="rm-body"><h4>After launch</h4><p>KDS · online payments (JazzCash / EasyPaisa / Raast / card) · delivery &amp; riders · WhatsApp Cloud API for order updates · loyalty / CRM.</p></div></div>
+  <div class="rm-row"><div class="rm-tag">v3</div><div class="rm-body"><h4>SaaS turn</h4><p>Sign-up, per-tenant subdomains, subscription billing, cross-tenant reporting.</p></div></div>
+</div>
+</section>
+
+<section id="risks">
+<h2 data-num="Section 17">Risks &amp; standing assumptions</h2>
+
+<h4>Assumptions I'm running with (correct me if wrong)</h4>
+<ul>
+  <li>Single POS terminal at DHA branch.</li>
+  <li>Delivery is offered across a defined area (owner sets radius / flat-fee later); pickup available at branch address.</li>
+  <li>Deal names remain as-is (including the political-party-named pizza deals — this is a deliberate marketing choice).</li>
+  <li>The party-named pizza deal English labels in the doc ("Muslim League N", "Tehreek-e-Insaf" …) are database-only; the customer-facing menu shows the original Urdu name plus a neutral English label if needed.</li>
+  <li>À la carte prices marked <code>?</code> in Section 06 will be supplied by the owner before P1's menu seed goes live.</li>
+</ul>
+
+<h4>Risks worth pricing in</h4>
+<ul>
+  <li><strong>Two client stacks</strong> (TS+React desktop/web, C# MAUI) — acknowledged tradeoff, mobile stays read-only.</li>
+  <li><strong>Supabase free-tier pauses</strong> after 7 idle days — keep-alive cron mitigates.</li>
+  <li><strong>Thermal printer model unknown</strong> — need model number from Khalifa before P1 driver work.</li>
+  <li><strong>Free-tier storage cap</strong> — 1 GB fits ~20 K photos; migrate to R2 if we hit it.</li>
+</ul>
+
+<h4>Ready-to-build checklist</h4>
+<ul>
+  <li>☑ Tenancy, stack, budget, MVP scope</li>
+  <li>☑ Business identity (Khalifa Foods, DHA Lahore, phone, tagline)</li>
+  <li>☑ Menu inventory delivered — 24 deals seeded, à la carte skeleton ready</li>
+  <li>☑ Receipt template drafted</li>
+  <li>☑ Website flow — pickup / delivery locked</li>
+  <li>☑ Auth (email OTP + PIN), bilingual, sync, free-tier services</li>
+  <li>☐ À la carte prices from owner (before P1 menu seed goes live)</li>
+  <li>☐ Printer model number (before P1 driver work)</li>
+  <li>☐ Domain name for DNS + email SPF/DKIM setup</li>
+  <li>☐ Owner's real logo vector (to replace bitmap header)</li>
+</ul>
+</section>
+
+<footer>
+  <span>Khalifa Foods · System Requirements v0.3</span>
+  <span>Prepared 2026-09-05 · locked, ready to build</span>
+</footer>
+
+</main>
+</div>

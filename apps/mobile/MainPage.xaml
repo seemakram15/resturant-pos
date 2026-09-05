@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="KhalifaMobile.MainPage"
+             Title="Khalifa">
+    <ScrollView>
+        <VerticalStackLayout Padding="20,24" Spacing="20">
+
+            <VerticalStackLayout Spacing="4">
+                <Label Text="KHALIFA · DHA LAHORE"
+                       FontFamily="PlexMedium"
+                       FontSize="10"
+                       TextColor="{StaticResource Accent}"
+                       CharacterSpacing="2" />
+                <Label Text="Today at a glance"
+                       Style="{StaticResource Display}" />
+                <Label x:Name="LastSyncLabel"
+                       Text="Last synced —"
+                       Style="{StaticResource Body}"
+                       FontSize="12" />
+            </VerticalStackLayout>
+
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto" RowSpacing="12">
+                <Frame Grid.Row="0" Grid.Column="0" BackgroundColor="{StaticResource Paper}" BorderColor="{StaticResource Rule}" CornerRadius="12" Padding="16">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="ORDERS TODAY" FontSize="10" FontFamily="PlexMedium" TextColor="{StaticResource InkMuted}" CharacterSpacing="2" />
+                        <Label x:Name="OrdersTodayLabel" Text="—" Style="{StaticResource Display}" FontSize="36" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="0" Grid.Column="1" BackgroundColor="{StaticResource Paper}" BorderColor="{StaticResource Rule}" CornerRadius="12" Padding="16">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="REVENUE" FontSize="10" FontFamily="PlexMedium" TextColor="{StaticResource InkMuted}" CharacterSpacing="2" />
+                        <Label x:Name="RevenueLabel" Text="Rs —" Style="{StaticResource Display}" FontSize="26" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="0" BackgroundColor="{StaticResource Paper}" BorderColor="{StaticResource Rule}" CornerRadius="12" Padding="16">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="PENDING" FontSize="10" FontFamily="PlexMedium" TextColor="{StaticResource InkMuted}" CharacterSpacing="2" />
+                        <Label x:Name="PendingLabel" Text="—" Style="{StaticResource Display}" FontSize="26" />
+                    </VerticalStackLayout>
+                </Frame>
+                <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="{StaticResource Paper}" BorderColor="{StaticResource Rule}" CornerRadius="12" Padding="16">
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="LOW STOCK" FontSize="10" FontFamily="PlexMedium" TextColor="{StaticResource InkMuted}" CharacterSpacing="2" />
+                        <Label x:Name="LowStockLabel" Text="—" Style="{StaticResource Display}" FontSize="26" />
+                    </VerticalStackLayout>
+                </Frame>
+            </Grid>
+
+            <Button Text="Refresh now" Clicked="OnRefreshClicked" HorizontalOptions="Fill" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>
