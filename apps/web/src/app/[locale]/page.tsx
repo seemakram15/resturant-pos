@@ -76,9 +76,9 @@ export default async function LandingPage({
             <Reveal variant="up" delay={120}>
               <h1 className="hero-vx-title">
                 {ur ? (
-                  <>بھرپور ذائقہ،<br /><em>خالص اجزاء</em></>
+                  <>بھرپور ذائقہ۔<br /><em>خالص اجزاء۔</em></>
                 ) : (
-                  <>Bold flavor,<br /><em>honest ingredients.</em></>
+                  <>Bold Flavor.<br /><em>Real Ingredients.</em></>
                 )}
               </h1>
             </Reveal>
@@ -103,16 +103,6 @@ export default async function LandingPage({
             </Reveal>
           </div>
 
-          <aside className="hero-vx-badges" aria-hidden="true">
-            <div className="hero-chip rating-chip glass float-b">
-              <span className="stars">★★★★★</span>
-              <span className="sub">2.3k+ {ur ? "آرڈرز" : "orders"}</span>
-            </div>
-            <div className="hero-chip meta-chip glass float-c">
-              <span className="ico" aria-hidden="true">🔥</span>
-              <span className="txt">{ur ? "تازہ گرل" : "Fresh off the grill"}</span>
-            </div>
-          </aside>
         </div>
 
         <div className="scroll-hint" aria-hidden="true">{ur ? "نیچے دیکھیں" : "Scroll"}</div>

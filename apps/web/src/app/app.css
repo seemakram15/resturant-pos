@@ -970,3 +970,44 @@
 .skel-generic { padding: 2.5rem 0 4rem; display: flex; flex-direction: column; gap: .85rem; }
 .skel-page { padding: 0; }
 
+
+/* ─── Hero v3 centering override (chips removed, copy centered) ───── */
+.hero-vx-inner { grid-template-columns: 1fr !important; justify-items: center; text-align: center; }
+.hero-vx-copy { max-width: 44rem; margin: 0 auto; }
+.hero-vx .eyebrow-pill { justify-content: center; }
+.hero-vx-title { text-align: center; margin-inline: auto; }
+.hero-vx .sub { margin-inline: auto; }
+.hero-vx .hero-actions { justify-content: center; align-items: stretch; gap: .85rem; }
+.hero-vx .hero-actions .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 3.25rem; padding: .95rem 1.5rem; }
+.hero-vx .hero-trust { justify-content: center; }
+
+
+/* ─── Hero text-legibility pass ───────────────────────────────────── */
+/* Darker floor gradient so text always reads against busy food photos */
+.hero-vx-veil { background:
+  linear-gradient(180deg, rgba(6,4,3,.55) 0%, rgba(6,4,3,.72) 55%, rgba(6,4,3,.9) 100%),
+  radial-gradient(70% 55% at 50% 55%, rgba(0,0,0,.55) 0%, transparent 75%) !important; }
+
+/* Punchier title + brighter accent line */
+.hero-vx-title { color: #FFFFFF !important; text-shadow: 0 4px 24px rgba(0,0,0,.55), 0 1px 2px rgba(0,0,0,.5) !important; }
+.hero-vx-title em { color: #FFC98A !important; font-style: italic; font-weight: 500; text-shadow: 0 4px 26px rgba(0,0,0,.55), 0 0 30px rgba(224,69,10,.35) !important; }
+
+/* Sub copy — stronger contrast */
+.hero-vx .sub { color: #FFF3E4 !important; text-shadow: 0 2px 14px rgba(0,0,0,.55); font-weight: 400; }
+
+/* Buttons — Contact reads clearly, matches primary weight */
+.hero-vx .btn.primary { background: var(--accent) !important; color: #FFFFFF !important; border: 1px solid var(--accent) !important; box-shadow: 0 16px 34px -12px rgba(0,0,0,.55), 0 0 0 1px rgba(255,255,255,.08) inset !important; }
+.hero-vx .btn.glass {
+  background: rgba(255,255,255,.16) !important;
+  color: #FFFFFF !important;
+  border: 1.5px solid rgba(255,255,255,.55) !important;
+  backdrop-filter: blur(10px) saturate(140%);
+  font-weight: 600 !important;
+  box-shadow: 0 12px 26px -14px rgba(0,0,0,.5);
+}
+.hero-vx .btn.glass:hover { background: rgba(255,255,255,.28) !important; border-color: #FFFFFF !important; }
+
+/* Trust chips — a hair more solid so numbers pop */
+.hero-vx .hero-trust.glass-list { color: #FFF3E4; font-weight: 500; }
+.hero-vx .hero-trust.glass-list strong { color: #FFFFFF; text-shadow: 0 2px 12px rgba(0,0,0,.55); }
+
