@@ -11,6 +11,7 @@ export type CartLine = {
   name_ur?: string | null;
   unitPrice: number;
   qty: number;
+  image?: string;
   notes?: string;
 };
 
@@ -50,6 +51,7 @@ export const useCart = create<CartState>()(
                 name_ur: input.name_ur,
                 unitPrice: input.unitPrice,
                 qty: input.qty ?? 1,
+                image: input.image,
                 notes: input.notes,
               },
             ],

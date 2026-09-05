@@ -53,6 +53,18 @@ export type OrderConfirmationArgs = {
   orderUrl: string;
 };
 
+/** Contact-form message to the admin inbox. */
+export async function sendContactMessage(args: {
+  name: string; email: string; phone?: string; subject: string; message: string;
+}) {
+  return sendBrevo({
+    to: adminEmail,
+    replyTo: args.email,
+    subject: `✉ Contact form · ${args.subject}`,
+    html: renderContactHtml(args),
+  });
+}
+
 /** Sends BOTH the customer confirmation AND the admin notification via Brevo. */
 export async function sendOrderConfirmationEmail(args: OrderConfirmationArgs) {
   return Promise.allSettled([
@@ -249,6 +261,43 @@ function baseShell(inner: string) {
     </td></tr>
   </table>
 </body></html>`;
+}
+
+function renderContactHtml(a: { name: string; email: string; phone?: string; subject: string; message: string }) {
+  return baseShell(`
+    <tr>
+      <td style="background:#141210;color:#FFC59B;padding:28px 32px">
+        <div style="font-size:11px;letter-spacing:2.5px;text-transform:uppercase;font-family:'SFMono-Regular',monospace;opacity:.85">New contact message</div>
+        <div style="font-family:Georgia,serif;font-size:26px;line-height:1.2;margin-top:8px;color:#FFFEFB;font-weight:600">${escapeHtml(a.subject)}</div>
+        <div style="margin-top:12px;font-size:13px;color:#FFC59B;font-family:'SFMono-Regular',monospace">
+          ${new Date().toLocaleString("en-PK", { timeZone: "Asia/Karachi", dateStyle: "medium", timeStyle: "short" })}
+        </div>
+      </td>
+    </tr>
+    <tr>
+      <td style="padding:24px 32px">
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin-bottom:20px">
+          <tr>
+            <td style="padding:12px;background:#FBF5EA;border-radius:10px">
+              <div style="font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:#8B6D2E;font-family:'SFMono-Regular',monospace">From</div>
+              <div style="margin-top:4px;color:#141210;font-size:14px;font-weight:600">${escapeHtml(a.name)}</div>
+              <div style="margin-top:2px;color:#3A342D;font-size:13px">
+                <a href="mailto:${escapeAttr(a.email)}" style="color:#C2410C;text-decoration:none">${escapeHtml(a.email)}</a>
+                ${a.phone ? ` · <a href="tel:${escapeAttr(a.phone)}" style="color:#C2410C;text-decoration:none">${escapeHtml(a.phone)}</a>` : ""}
+              </div>
+            </td>
+          </tr>
+        </table>
+        <div style="font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#6B6157;font-family:'SFMono-Regular',monospace;margin-bottom:6px">Message</div>
+        <div style="padding:16px 18px;background:#FFFEFB;border:1px solid #E4DBC9;border-radius:10px;color:#141210;font-size:14px;line-height:1.6;white-space:pre-wrap">${escapeHtml(a.message)}</div>
+        <p style="text-align:center;margin:20px 0 4px">
+          <a href="mailto:${escapeAttr(a.email)}?subject=${encodeURIComponent("Re: " + a.subject)}" style="background:#C2410C;color:#FFFEFB;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:600;display:inline-block;font-size:14px">
+            Reply to ${escapeHtml(a.name)} →
+          </a>
+        </p>
+      </td>
+    </tr>
+  `);
 }
 
 function escapeHtml(s: string) {

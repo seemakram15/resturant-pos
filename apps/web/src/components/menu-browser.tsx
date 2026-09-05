@@ -36,6 +36,7 @@ type AddArg = {
   name_en: string;
   name_ur?: string | null;
   unitPrice: number;
+  image?: string;
 };
 
 function AddControl({ line, label, onFlash }: { line: AddArg; label: string; onFlash: (n: string) => void }) {
@@ -253,7 +254,7 @@ export function MenuBrowser({
                       <div className="price-row">
                         <span className="price"><span className="rs">Rs</span>{formatPKR(d.price, { withSymbol: false })}</span>
                         <AddControl
-                          line={{ kind: "combo", refId: d.slug, name_en: d.name_en, name_ur: d.name_ur, unitPrice: d.price }}
+                          line={{ kind: "combo", refId: d.slug, name_en: d.name_en, name_ur: d.name_ur, unitPrice: d.price, image: d.photo_url ?? dealImage(d.category, d.slug) }}
                           label={t("menu.add_to_cart")}
                           onFlash={pop}
                         />
@@ -287,7 +288,7 @@ export function MenuBrowser({
                   <div className="price-row">
                     <span className="price"><span className="rs">Rs</span>{formatPKR(i.base_price, { withSymbol: false })}</span>
                     <AddControl
-                      line={{ kind: "item", refId: i.id, name_en: i.name_en, name_ur: i.name_ur, unitPrice: i.base_price }}
+                      line={{ kind: "item", refId: i.id, name_en: i.name_en, name_ur: i.name_ur, unitPrice: i.base_price, image: i.photo_url ?? itemImage(i.sku, active) }}
                       label={t("menu.add_to_cart")}
                       onFlash={pop}
                     />
