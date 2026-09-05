@@ -69,3 +69,4 @@ Owner supplies: Supabase project keys, Resend API key.
 ## Requirements doc
 
 Full spec: [`docs/requirements.html`](./docs/requirements.html) or the live artifact.
+# resturant-pos
