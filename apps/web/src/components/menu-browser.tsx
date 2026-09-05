@@ -14,6 +14,22 @@ const DEAL_GROUPS: Array<{ key: string; label_en: string; label_ur: string }> = 
   { key: "pizza", label_en: "Pizza deals", label_ur: "پیزا ڈیلز" },
 ];
 
+const CAT_ICON: Record<string, string> = {
+  deals: "★",
+  burgers: "🍔", pizza: "🍕", shawarma: "🌯", sandwiches: "🥪",
+  appetizers: "🍗", steaks: "🥩", chicken: "🍗", "paratha-wraps": "🌯",
+  sides: "🍟", pasta: "🍝", drinks: "🥤",
+};
+
+const DIET_TAGS = [
+  { key: "spicy",   label_en: "Spicy",    label_ur: "مسالہ دار", icon: "🌶" },
+  { key: "grilled", label_en: "Grilled",  label_ur: "گرلڈ",      icon: "🔥" },
+  { key: "beef",    label_en: "Beef",     label_ur: "بیف",       icon: "🥩" },
+  { key: "luxury",  label_en: "Luxury",   label_ur: "لگژری",     icon: "✦"  },
+];
+
+type Sort = "popular" | "price-asc" | "price-desc" | "name";
+
 type AddArg = {
   kind: "item" | "combo";
   refId: string;
@@ -22,21 +38,16 @@ type AddArg = {
   unitPrice: number;
 };
 
-/** Add button that turns into a +/- stepper once the item is in the cart. */
 function AddControl({ line, label, onFlash }: { line: AddArg; label: string; onFlash: (n: string) => void }) {
   const lines = useCart((s) => s.lines);
   const add = useCart((s) => s.add);
   const setQty = useCart((s) => s.setQty);
   const existing = lines.find((l) => l.kind === line.kind && l.refId === line.refId);
-
   if (!existing) {
     return (
       <button
-        className={`btn add-btn ${line.kind === "item" ? "subtle" : ""}`}
-        onClick={() => {
-          add(line);
-          onFlash(line.name_en);
-        }}
+        className="btn add-btn subtle"
+        onClick={() => { add(line); onFlash(line.name_en); }}
       >
         + {label}
       </button>
@@ -63,7 +74,11 @@ export function MenuBrowser({
   itemsByCat: Record<string, Item[]>;
 }) {
   const t = makeT(locale);
+  const ur = locale === "ur";
   const [active, setActive] = useState<string>("deals");
+  const [query, setQuery] = useState<string>("");
+  const [sort, setSort] = useState<Sort>("popular");
+  const [tags, setTags] = useState<string[]>([]);
   const [flash, setFlash] = useState<string | null>(null);
 
   const cats = useMemo(
@@ -71,32 +86,158 @@ export function MenuBrowser({
     [categories]
   );
 
-  function pop(name: string) {
-    setFlash(name);
-    setTimeout(() => setFlash(null), 1400);
+  // Category counts (respect only search + tag filters, not the active chip)
+  const counts = useMemo(() => {
+    const c: Record<string, number> = { deals: 0 };
+    const q = query.trim().toLowerCase();
+    c.deals = combos.filter((k) =>
+      (!q || (k.name_en + " " + (k.description_en ?? "")).toLowerCase().includes(q))
+    ).length;
+    for (const cat of categories.filter((x) => x.slug !== "deals")) {
+      const list = itemsByCat[cat.slug] ?? [];
+      c[cat.slug] = list.filter((it) => {
+        if (q && !(it.name_en + " " + (it.name_ur ?? "")).toLowerCase().includes(q)) return false;
+        if (tags.length && !tags.every((t) => it.tags?.includes(t))) return false;
+        return true;
+      }).length;
+    }
+    return c;
+  }, [combos, categories, itemsByCat, query, tags]);
+
+  function toggleTag(k: string) {
+    setTags((t) => (t.includes(k) ? t.filter((x) => x !== k) : [...t, k]));
   }
+  function reset() { setQuery(""); setTags([]); setSort("popular"); setActive("deals"); }
+  function pop(name: string) { setFlash(name); setTimeout(() => setFlash(null), 1400); }
+
+  // Filter + sort helpers ------------------------------------------------
+  const q = query.trim().toLowerCase();
+
+  const filteredCombos = useMemo(() => {
+    let list = combos.slice();
+    if (q) list = list.filter((k) => (k.name_en + " " + (k.description_en ?? "")).toLowerCase().includes(q));
+    if (sort === "price-asc")  list.sort((a, b) => a.price - b.price);
+    if (sort === "price-desc") list.sort((a, b) => b.price - a.price);
+    if (sort === "name")       list.sort((a, b) => a.name_en.localeCompare(b.name_en));
+    return list;
+  }, [combos, q, sort]);
+
+  const filteredItems = useMemo(() => {
+    if (active === "deals") return [] as Item[];
+    let list = (itemsByCat[active] ?? []).slice();
+    if (q) list = list.filter((i) => (i.name_en + " " + (i.name_ur ?? "")).toLowerCase().includes(q));
+    if (tags.length) list = list.filter((i) => tags.every((t) => i.tags?.includes(t)));
+    if (sort === "price-asc")  list.sort((a, b) => a.base_price - b.base_price);
+    if (sort === "price-desc") list.sort((a, b) => b.base_price - a.base_price);
+    if (sort === "name")       list.sort((a, b) => a.name_en.localeCompare(b.name_en));
+    return list;
+  }, [itemsByCat, active, q, tags, sort]);
+
+  const activeCount = active === "deals" ? filteredCombos.length : filteredItems.length;
+  const noResults = activeCount === 0 && (q || tags.length);
+  const activeFilterCount = (q ? 1 : 0) + tags.length + (sort !== "popular" ? 1 : 0);
 
   return (
     <>
-      <nav className="chips" aria-label="Menu categories">
-        {cats.map((c) => (
-          <button key={c.slug} className={`chip ${active === c.slug ? "active" : ""}`} onClick={() => setActive(c.slug)}>
-            {locale === "ur" && c.name_ur ? c.name_ur : c.name_en}
-          </button>
-        ))}
-      </nav>
+      {/* ── Filter bar (sticky) ────────────────────────────────────── */}
+      <div className="menu-filterbar" role="search">
+        <div className="mfb-row mfb-primary">
+          <label className="mfb-search">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder={ur ? "برگرز، پیزا، شاورما تلاش کریں…" : "Search burgers, pizza, deals…"}
+              aria-label={ur ? "تلاش" : "Search menu"}
+            />
+            {query && (
+              <button className="mfb-clear" onClick={() => setQuery("")} aria-label="Clear search">×</button>
+            )}
+          </label>
 
-      {flash && (
-        <div className="toast">✓ {t("menu.added")}: {flash}</div>
-      )}
+          <div className="mfb-sort">
+            <span className="mfb-label">{ur ? "ترتیب" : "Sort"}</span>
+            <select value={sort} onChange={(e) => setSort(e.target.value as Sort)} aria-label={ur ? "ترتیب" : "Sort"}>
+              <option value="popular">{ur ? "مقبول" : "Popular"}</option>
+              <option value="price-asc">{ur ? "قیمت: کم → زیادہ" : "Price: low → high"}</option>
+              <option value="price-desc">{ur ? "قیمت: زیادہ → کم" : "Price: high → low"}</option>
+              <option value="name">{ur ? "نام (A–Z)" : "Name (A–Z)"}</option>
+            </select>
+          </div>
 
-      {active === "deals" ? (
+          {activeFilterCount > 0 && (
+            <button className="mfb-reset" onClick={reset} aria-label="Reset filters">
+              {ur ? "ری سیٹ" : "Reset"} ({activeFilterCount})
+            </button>
+          )}
+        </div>
+
+        <div className="mfb-row mfb-tags" role="group" aria-label={ur ? "ٹیگ فلٹرز" : "Tag filters"}>
+          {DIET_TAGS.map((tg) => (
+            <button
+              key={tg.key}
+              type="button"
+              className={`tag-toggle ${tags.includes(tg.key) ? "on" : ""}`}
+              onClick={() => toggleTag(tg.key)}
+              aria-pressed={tags.includes(tg.key)}
+            >
+              <span className="tt-ico" aria-hidden="true">{tg.icon}</span>
+              <span>{ur ? tg.label_ur : tg.label_en}</span>
+            </button>
+          ))}
+        </div>
+
+        <nav className="chips scroll-x" aria-label="Menu categories">
+          {cats.map((c) => (
+            <button
+              key={c.slug}
+              className={`chip ${active === c.slug ? "active" : ""}`}
+              onClick={() => setActive(c.slug)}
+              aria-pressed={active === c.slug}
+            >
+              <span className="chip-ico" aria-hidden="true">{CAT_ICON[c.slug] ?? "•"}</span>
+              <span>{ur && c.name_ur ? c.name_ur : c.name_en}</span>
+              <span className="chip-count">{counts[c.slug] ?? 0}</span>
+            </button>
+          ))}
+        </nav>
+
+        <div className="mfb-meta">
+          <span>{activeCount} {ur ? "آئٹمز" : "items"}</span>
+          {(q || tags.length > 0) && (
+            <span className="mfb-active-filters">
+              {q && <span className="filter-pill">"{query}"</span>}
+              {tags.map((tg) => (
+                <span key={tg} className="filter-pill">
+                  {DIET_TAGS.find((d) => d.key === tg)?.[ur ? "label_ur" : "label_en"]}
+                  <button onClick={() => toggleTag(tg)} aria-label="Remove filter">×</button>
+                </span>
+              ))}
+            </span>
+          )}
+        </div>
+      </div>
+
+      {flash && <div className="toast">✓ {t("menu.added")}: {flash}</div>}
+
+      {/* ── Content ───────────────────────────────────────────────── */}
+      {noResults ? (
+        <div className="empty-state">
+          <div className="empty-icon">🍽️</div>
+          <h3>{ur ? "کوئی نتیجہ نہیں" : "Nothing matches yet"}</h3>
+          <p>{ur ? "تلاش تبدیل کریں یا فلٹرز ری سیٹ کریں۔" : "Try a different word or reset the filters."}</p>
+          <button className="btn primary" onClick={reset}>{ur ? "فلٹرز ری سیٹ کریں" : "Reset filters"}</button>
+        </div>
+      ) : active === "deals" ? (
         DEAL_GROUPS.map((g) => {
-          const items = combos.filter((c) => c.category === g.key);
+          const items = filteredCombos.filter((c) => c.category === g.key);
           if (!items.length) return null;
           return (
             <section key={g.key} style={{ marginBottom: "3rem" }}>
-              <h3 className="menu-group-head">{locale === "ur" ? g.label_ur : g.label_en}</h3>
+              <h3 className="menu-group-head">{ur ? g.label_ur : g.label_en}</h3>
               <div className="deals">
                 {items.map((d) => (
                   <article key={d.slug} className="deal-card">
@@ -127,7 +268,7 @@ export function MenuBrowser({
       ) : (
         <section>
           <div className="items">
-            {(itemsByCat[active] ?? []).map((i) => (
+            {filteredItems.map((i) => (
               <article key={i.id} className="item-card">
                 <div className="item-photo">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -155,14 +296,6 @@ export function MenuBrowser({
               </article>
             ))}
           </div>
-          {(itemsByCat[active] ?? []).length === 0 && (
-            <div className="empty">
-              <div className="icon">🍽️</div>
-              <p style={{ color: "var(--ink-3)" }}>
-                {locale === "ur" ? "اس زمرے میں ابھی کچھ نہیں۔" : "Nothing in this category yet."}
-              </p>
-            </div>
-          )}
         </section>
       )}
     </>

@@ -135,13 +135,17 @@ export async function POST(req: Request) {
   const { error: linesErr } = await sb.from("order_lines").insert(lineRows);
   if (linesErr) return bad(`lines: ${linesErr.message}`, 500);
 
-  // Fire-and-forget confirmation email
+  // Fire-and-forget confirmation email (both customer + admin)
   sendOrderConfirmationEmail({
     to: body.customer_email,
     name: body.customer_name,
+    phone: body.customer_phone,
     billNo,
     total: subtotal,
     channel: body.channel,
+    address: body.delivery_address,
+    pickupTime: body.pickup_time,
+    notes: body.notes ?? null,
     lines: body.lines.map((l) => ({ name: l.name, qty: l.qty, amount: l.unit_price * l.qty })),
     orderUrl: `${process.env.NEXT_PUBLIC_SITE_URL ?? ""}/en/order/${order.id}`,
   }).catch((e) => console.error("email failed", e));
